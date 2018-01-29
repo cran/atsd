@@ -16,17 +16,16 @@
 #############################################################################
 
 #' @keywords internal
-set_https_options <- function() {
-  if (substr(get("url", envir = atsdEnv), 1, 5) == "https") {
-    encryption_code <- switch(get("encryption", envir = atsdEnv),
-                              "tls1" = RCurl::SSLVERSION_TLSv1,
-                              "ssl2" = RCurl::SSLVERSION_SSLv2,
-                              "ssl3" = RCurl::SSLVERSION_SSLv3,
-                              RCurl::SSLVERSION_DEFAULT
-    )
-    return(list(ssl.verifypeer = get("verify", envir = atsdEnv), 
-                ssl.verifyhost = get("verify", envir = atsdEnv), 
-                sslversion = encryption_code))
+
+number_to_name <- function(col_names, col_numbers) {
+  if (is.numeric(col_numbers)) {
+    return(col_names[col_numbers])
+  } else {
+    return(col_numbers)
   }
-  return(list())
+}
+
+select_columns <- function(dfr, time_col, metric_col, entity_col, tags_col) {
+  cols <- c(time_col, metric_col, entity_col, tags_col)
+  return(dfr[cols[!is.na(cols)]])
 }

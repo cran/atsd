@@ -74,50 +74,68 @@
 get_metrics <- function(expression = "",
                         active = "",
                         tags = "*",
-                        limit = "",
+                        limit = 0,
                         verbose = TRUE){
   
-  if (check_connection()) {
-    https_options <- set_https_options()
-    response <- httr::GET(paste0(get("url", envir = atsdEnv), "/api/v1/metrics"),
-                          httr::authenticate(get("user", envir = atsdEnv), 
-                                             get("password", envir = atsdEnv)),
-                          query = list(
-                            expression = expression,
-                            active = active,
-                            tags = tags,
-                            limit = limit),
-                          config = https_options
-                            #list(
-                            #cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))), 
-                            #followlocation = TRUE, 
-                            #useragent = "R", 
-                            #ssl.verifypeer = FALSE
-                            #sslversion=3)
-    )
-    httr::stop_for_status(response)
-    if (verbose) {
-      cat("Your request was successfully processed by server. Start parsing and filtering.")
-    }
-    metrics <- lapply(httr::content(response, "parsed"), filter_metric_attributes)
-    metrics <- lapply(metrics, make_flat)
-    if (verbose) {
-      cat("\nParsing and filtereng done. Start converting to data frame.")
-    }
-    
-    # Conversion of list of metrics to data frame.
-    # The following one-liner is too slow, so we should do more work.
-    # metrics <- (Reduce(merge_all, metrics))
-    metrics <- list_to_dfr(metrics)
-    if (verbose) {
-      cat("\nConverting to data frame done.")
-    }
-    
-    if ("lastInsertTime" %in% names(metrics)) {
-      metrics$lastInsertTime <- as.POSIXlt(metrics$lastInsertTime / 1000, origin = "1970-01-01 00:00:00", tz = "GMT")
-    }
-    return(metrics)
-  } else {
-    invisible()
+  if (!check_connection()) {
+    return(NA)
   }
+  
+  https_options <- set_https_options()
+  response <- tryCatch({
+    httr::GET(paste0(get("url", envir = atsdEnv), "/api/v1/metrics"),
+              httr::authenticate(get("user", envir = atsdEnv), 
+                                 get("password", envir = atsdEnv)),
+              query = list(
+                expression = expression,
+                active = active,
+                tags = tags,
+                limit = limit),
+              config = https_options
+              #list(
+              #cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))), 
+              #followlocation = TRUE, 
+              #useragent = "R", 
+              #ssl.verifypeer = FALSE
+              #sslversion=3)
+    )
+  }, error = function(er) {
+    message("Malformed http(s) request.")
+    message(er$message)
+    return(NULL)
+  })
+  
+  if (is.null(response)) {
+    return(NA)
+  }
+
+  tryCatch({
+    httr::stop_for_status(response)
+  }, error = function(er) {
+    message("Error occurs when processing the request to ATSD server:")
+    message(er$message)
+    return(NA)
+  })
+  
+  if (verbose) {
+    cat("Your request was successfully processed by server. Start parsing and filtering.")
+  }
+  metrics <- lapply(httr::content(response, "parsed"), filter_metric_attributes)
+  metrics <- lapply(metrics, make_flat)
+  if (verbose) {
+    cat("\nParsing and filtering done. Start converting to data frame.")
+  }
+  
+  # Conversion of list of metrics to data frame.
+  # The following one-liner is too slow, so we should do more work.
+  # metrics <- (Reduce(merge_all, metrics))
+  metrics <- list_to_dfr(metrics)
+  if (verbose) {
+    cat("\nConverting to data frame done.")
+  }
+  
+  if ("lastInsertTime" %in% names(metrics)) {
+    metrics$lastInsertTime <- as.POSIXlt(metrics$lastInsertTime / 1000, origin = "1970-01-01 00:00:00", tz = "GMT")
+  }
+  return(metrics)
 }

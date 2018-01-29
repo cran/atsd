@@ -38,6 +38,11 @@
 #'     You could specify a group of entities and extract data 
 #'     for entities from this group.
 #'     For example, \code{entity_group = "HP Servers"}.
+#' @param entity_expression
+#'     Optional string argument.
+#'     Select entities matching particular name pattern and/or user-defined entity tags.
+#'     The syntax of the \code{entity_expression} argument is explained in the package vignette.
+#'     Type \code{browseVignettes(package = "atsd")} to see the vignette.
 #' @param tags
 #'     Optional string vector argument. 
 #'     List of user-defined series tags to filter the fetched time-series data, 
@@ -52,10 +57,10 @@
 #' @param end_time
 #'     Optional string argument.
 #'     The end time of the selection interval, for example, 
-#'     \code{end_time = "date(2014-12-27)"}.
+#'     \code{end_time = "date('2014-12-27')"}.
 #'     If not provided, the current time will be used. 
 #'     Specify the date and time, or use one of the supported expressions:
-#'     \url{http://axibase.com/axibase-time-series-database/screenshots-4/end-time/}.
+#'     \url{https://github.com/axibase/atsd/blob/master/shared/calendar.md#keywords}.
 #'     For example, \code{'current_day'} would set the end of selection interval 
 #'     to 00:00:00 of the current day. 
 #' @param aggregate_interval
@@ -94,7 +99,7 @@
 #' @return 
 #'     The function returns a data frame. It could be empty if no data match your query
 #'     or if your request could not be processed by ATSD server. In any case you will 
-#'     get a console diagnostic message with a short description of the server responce.
+#'     get a console diagnostic message with a short description of the server response.
 #' @details
 #'     The function has only two required arguments:
 #'     \code{metric} and \code{selection_interval}.
@@ -130,6 +135,7 @@
 query <- function(metric,
                   entity = NA,
                   entity_group = NA,
+                  entity_expression = NA,
                   tags = character(),
                   selection_interval,
                   end_time = NA,
@@ -144,12 +150,13 @@ query <- function(metric,
     if (verbose) {
       cat(missing_args)
     }
-    return()
+    return(NA)
   }
   req <- get_request( export_type = export_type,
                       metric = metric,
                       entity = entity,
                       entity_group = entity_group,
+                      entity_expression = entity_expression,
                       tags = tags,
                       selection_interval = selection_interval,
                       end_time = end_time,
@@ -168,7 +175,6 @@ query <- function(metric,
   request <- paste0(url, '/export?settings=', request)
   url_encoded <- paste0(url, '/export?settings=', url_encoded)
   
-  
   d <- RCurl::debugGatherer()
   
   https_options <- set_https_options()
@@ -184,6 +190,9 @@ query <- function(metric,
   response <- parse_response(response_body, response_header)
   if (verbose) {
     cat(response[[2]])
+  }
+  if (grepl(pattern = "There is some problem", response[[2]])) {
+    return(NA)
   }
   return(response[[1]])
 }

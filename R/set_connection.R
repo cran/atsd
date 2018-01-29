@@ -138,8 +138,10 @@ set_connection <- function(url = NA, user = NA, password = NA,
   if (!is.na(connection_data[4])) {
     if (is.character(connection_data[4]) && (tolower(connection_data[4]) %in% c("yes", "true"))) {
       assign("verify", TRUE, envir = atsdEnv)
-    } else {
+    } else if (is.character(connection_data[4]) && (tolower(connection_data[4]) %in% c("no", "false"))) {
       assign("verify", FALSE, envir = atsdEnv)
+    } else {
+      assign("verify", NA, envir = atsdEnv)
     }
   } else if (rewrite_na) {
     assign("verify", NA, envir = atsdEnv)

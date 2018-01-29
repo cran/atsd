@@ -27,16 +27,16 @@
 #' the \code{\link{save_connection}} function.
 #' @export
 show_connection <- function() {
-  cat(" url = ", get("url", envir = atsdEnv))
-  cat("\n user = ", get("user", envir = atsdEnv))
-  cat("\n password = ", get("password", envir = atsdEnv))
+  cat("url =", get("url", envir = atsdEnv))
+  cat("\nuser =", get("user", envir = atsdEnv))
+  cat("\npassword =", get("password", envir = atsdEnv))
   verify <- get("verify", envir = atsdEnv)
   if (is.na(verify)) {
-    cat("\n verify = NA")
+    cat("\nverify = NA")
   } else if (verify) {
-    cat("\n verify = yes")
+    cat("\nverify = yes")
   } else {
-    cat("\n verify = no")
+    cat("\nverify = no")
   }
-  cat("\n encryption = ", get("encryption", envir = atsdEnv))
+  cat("\nencryption =", get("encryption", envir = atsdEnv))
 }

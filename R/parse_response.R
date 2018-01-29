@@ -14,6 +14,7 @@
 # permissions and limitations under the License.
 #
 #############################################################################
+#' @importFrom utils read.csv
 #' @keywords internal
 parse_response <- function(body, header) {
   is_OK <- (gregexpr(pattern = "200 OK", header)[[1]] != -1)  
@@ -45,7 +46,7 @@ parse_response <- function(body, header) {
       rm(body)
       dfr <- read.csv(t_con, stringsAsFactors = FALSE)
       if (nrow(dfr) > 0)
-      dfr$Timestamp <- strptime(as.character(dfr$Timestamp), format='%Y-%m-%d %H:%M:%S', tz = 'GMT')
+      dfr$Timestamp <- as.POSIXct(strptime(as.character(dfr$Timestamp), format='%Y-%m-%d %H:%M:%S', tz = 'GMT'))
       close(t_con)
       #       message <- paste0(message,
       #                         "\n",

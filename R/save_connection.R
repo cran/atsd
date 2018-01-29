@@ -35,7 +35,7 @@
 #'     view the package vignette:
 #'     \code{browseVignettes(package = "atsd")}.
 #'           
-#' @examples
+#' @examples \dontrun{
 #' # Write the current values of the connection parameters to the configuration file
 #' save_connection()
 #' 
@@ -45,7 +45,7 @@
 #' # Write all parameters nedeed for https connection to the configuration file
 #' save_connection(url = "https://my.company.com:8443", user = "user001", password = "123456", 
 #'                 verify = "no", encryption = "ssl3")
-#' 
+#' }
 #' @export
 save_connection <- function(url = NA, user = NA, password = NA, 
                             verify = NA, encryption = NA) {

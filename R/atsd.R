@@ -21,23 +21,31 @@
 #' The package lets you query 
 #' \href{http://axibase.com/axibase-time-series-database/}{Axibase Time-Series Database}
 #' (ATSD)
-#' for time-series data and forecasts.
+#' for time-series data and forecasts, and save your series into ATSD.
 #' List of package functions:
 #'
+#' \code{\link{create_entity}} -- creates a new entity and it's tags or replaces the tags of an existing entity.
+#' 
+#' \code{\link{get_metrics}} -- get information about the metrics collected by ATSD.
+#' 
+#' \code{\link{get_entities}} -- get information about the entities collected by ATSD.
+#' 
+#' \code{\link{get_series_tags}} -- get unique time series tags for the metric. 
+#' 
+#' \code{\link{query}} -- get time-series data and forecasts from ATSD.
+#' 
+#' \code{\link{save_series}} -- save time series in ATSD.
+#' 
 #' \code{\link{set_connection}, \link{save_connection}, 
 #' \link{show_connection}} - are used to manage connection with ATSD: 
 #' set up and store the url, user name, and password,
 #' configure cryptographic protocol and enforce SSL certificate validation 
 #' in the case of https connection.
-#'
-#' \code{\link{query}} -- get time-series data and forecasts from ATSD.
-#'
-#' \code{\link{get_metrics}} -- get information about the metrics collected by ATSD.
 #' 
-#' \code{\link{get_entities}} -- get information about the entities collected by ATSD.
-#' 
-#' \code{\link{to_zoo}} - converts a time-series data frame to 'zoo' object
+#' \code{\link{to_zoo}} - convert a time-series data frame to 'zoo' object
 #'  for manipulating irregular time-series with built-in functions in zoo package.
+#' 
+#' \code{\link{update_entity}} -- update tags and enabled status of an entity.
 #' 
 #' Type 
 #' \strong{\code{browseVignettes(package = "atsd")}}

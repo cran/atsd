@@ -1,16 +1,11 @@
 # the url of ATSD including port number
-url=http://localhost:8088
-
+url=http://localhost:8088   
 # the user name
 user=user
-
 # the user's password
-password=password
-
+password=password  
 # validate ATSD SSL certificate: yes, no
-verify=no
-
+verify=no  
 # cryptographic protocol used by ATSD https server:
 # default, ssl2, ssl3, tls1
-encryption=ssl3
-
+encryption=ssl3 

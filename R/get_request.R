@@ -14,11 +14,14 @@
 # permissions and limitations under the License.
 #
 #############################################################################
+
 #' @keywords internal
+
 get_request <- function(  export_type,
                           metric,
                           entity = NA,
                           entity_group = NA,
+                          entity_expression = NA,
                           tags = character(),  
                           selection_interval,
                           end_time = NA,
@@ -63,6 +66,10 @@ get_request <- function(  export_type,
   
   if (!is.na(entity_group)) {
     request <- paste0(request, '"g":"', entity_group, '",')
+  }
+  
+  if (!is.na(entity_expression)) {
+    request <- paste0(request, '"ex":"', entity_expression, '",')
   }
   
   si_spelling <- check_time_interval_spelling("selection_interval", selection_interval)

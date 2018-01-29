@@ -33,7 +33,7 @@
 #'     only entities with positive lastInsertTime are included in the response.
 #' @param tags
 #'     Optional string argument.
-#'     User-defined entitiy tags to be included in the response.
+#'     User-defined entity tags to be included in the response.
 #'     By default, all the tags will be included.
 #' @param limit
 #'     Optional integer argument.
@@ -92,7 +92,7 @@ get_entities <- function(expression = "",
     }
     entities <- lapply(httr::content(response, "parsed"), make_flat)
     if (verbose) {
-      cat("\nParsing and filtereng done. Start converting to data frame.")
+      cat("\nParsing and filtering done. Start converting to data frame.")
     }
     
     # Conversion of list of entities to data frame.
@@ -108,6 +108,6 @@ get_entities <- function(expression = "",
     }
     return(entities)
   } else {
-    invisible()
+    return(NA)
   }
 }
